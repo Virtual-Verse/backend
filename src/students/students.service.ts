@@ -56,6 +56,8 @@ export class StudentsService {
         family: { select: { familyName: true, id: true } },
         progressItems: true, // Show all progress tracking items
         completionRecords: true, // Show all completion records
+        quizAssignments: true,
+        resourceAssignments: true,
       },
     });
 

@@ -9,6 +9,7 @@ import { StudentsModule } from './students/students.module';
 import { LibraryResourcesModule } from './library-resources/library-resources.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
+import { AssignmentsModule } from './assignments/assignments.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { QuizzesModule } from './quizzes/quizzes.module';
     LibraryResourcesModule,
     SupabaseModule,
     QuizzesModule,
+    AssignmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
