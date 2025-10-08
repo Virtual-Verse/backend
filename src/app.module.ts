@@ -10,6 +10,7 @@ import { LibraryResourcesModule } from './library-resources/library-resources.mo
 import { SupabaseModule } from './supabase/supabase.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { AssignmentsModule } from './assignments/assignments.module';
+import { StudentProgressModule } from './student-progress/student-progress.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AssignmentsModule } from './assignments/assignments.module';
     SupabaseModule,
     QuizzesModule,
     AssignmentsModule,
+    StudentProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService],
