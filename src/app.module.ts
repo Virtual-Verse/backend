@@ -11,6 +11,7 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { AssignmentsModule } from './assignments/assignments.module';
 import { StudentProgressModule } from './student-progress/student-progress.module';
+import { BadgesModule } from './badges/badges.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { StudentProgressModule } from './student-progress/student-progress.modul
     QuizzesModule,
     AssignmentsModule,
     StudentProgressModule,
+    BadgesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
