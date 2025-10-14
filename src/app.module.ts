@@ -13,6 +13,7 @@ import { AssignmentsModule } from './assignments/assignments.module';
 import { StudentProgressModule } from './student-progress/student-progress.module';
 import { BadgesModule } from './badges/badges.module';
 import { AchievementsModule } from './achievements/achievements.module';
+import { FeePaymentsModule } from './fee-payments/fee-payments.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AchievementsModule } from './achievements/achievements.module';
     StudentProgressModule,
     BadgesModule,
     AchievementsModule,
+    FeePaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
