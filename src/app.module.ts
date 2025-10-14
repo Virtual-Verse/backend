@@ -12,6 +12,7 @@ import { QuizzesModule } from './quizzes/quizzes.module';
 import { AssignmentsModule } from './assignments/assignments.module';
 import { StudentProgressModule } from './student-progress/student-progress.module';
 import { BadgesModule } from './badges/badges.module';
+import { AchievementsModule } from './achievements/achievements.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BadgesModule } from './badges/badges.module';
     AssignmentsModule,
     StudentProgressModule,
     BadgesModule,
+    AchievementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
