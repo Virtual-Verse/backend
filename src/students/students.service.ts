@@ -1,51 +1,80 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { UpdateStudentStatusDto } from './dto/update-student-status.dto';
+
+// --- A NEW HELPER FUNCTION ---
+const transformStudentData = (dto: CreateStudentDto | UpdateStudentDto) => {
+  // --- THE FIX IS HERE ---
+  // We add 'familyId' to this list.
+  // This extracts it from 'dto', so it is NOT included in 'restData'.
+  const { age, tuitionFee, enrolledAt, familyId, ...restData } = dto as any; 
+  
+  const data: any = { ...restData };
+
+  // 1. Handle Age (Number)
+  if (age !== undefined) {
+    data.age = age === null || age === '' ? null : Number(age);
+  }
+
+  // 2. Handle Tuition Fee (Decimal)
+  if (tuitionFee !== undefined) {
+    data.tuitionFee =
+      tuitionFee === null || tuitionFee === '' ? null : new Prisma.Decimal(tuitionFee);
+  }
+
+  // 3. Handle EnrolledAt (Date)
+  if (enrolledAt) {
+    data.enrolledAt = new Date(enrolledAt);
+  } else if (enrolledAt === '' || enrolledAt === null) {
+    data.enrolledAt = null;
+  }
+  
+  return data;
+};
 
 @Injectable()
 export class StudentsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createStudentDto: CreateStudentDto) {
-    const { familyId, enrolledAt, ...studentData } = createStudentDto;
+    const { familyId } = createStudentDto; // We still need familyId here for the check
 
-    const familyExists = await this.prisma.family.count({
-      where: { id: familyId },
-    });
+    // 1. Check Family Existence
+    const familyExists = await this.prisma.family.count({ where: { id: familyId } });
     if (familyExists === 0) {
-      throw new NotFoundException(
-        `Family with ID ${familyId} not found. Cannot create student.`,
-      );
+      throw new NotFoundException(`Family with ID ${familyId} not found.`);
     }
 
-    const dataToCreate: any = {
-      ...studentData,
-      family: {
-        connect: { id: familyId },
-      },
-    };
+    // 2. Transform Data
+    // The transformer now ensures 'familyId' is REMOVED from dataToCreate
+    const dataToCreate = transformStudentData(createStudentDto);
 
-    if (enrolledAt) {
-      dataToCreate.enrolledAt = new Date(enrolledAt);
-    }
-
+    // 3. Create Student
     return this.prisma.student.create({
-      data: dataToCreate,
+      data: {
+        ...dataToCreate, // Safe to spread now
+        family: {
+          connect: { id: familyId },
+        },
+      },
     });
   }
 
+
+  // This method returns all students with their family information.
   async findAll() {
     return this.prisma.student.findMany({
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        enrolledAt: true,
-        family: { select: { familyName: true } },
-      },
       orderBy: { id: 'asc' },
+      include: {
+        family: {
+          select: {
+            familyName: true,
+          },
+        },
+      },
     });
   }
 
@@ -70,13 +99,14 @@ export class StudentsService {
 
   async update(id: number, updateStudentDto: UpdateStudentDto) {
     try {
+      const dataToUpdate = transformStudentData(updateStudentDto);
+      
       return await this.prisma.student.update({
         where: { id },
-        data: updateStudentDto,
+        data: dataToUpdate,
       });
     } catch (error) {
-      // Handle the case where the student ID might not exist
-      if (error.code === 'P2025') {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         throw new NotFoundException(`Student with ID ${id} not found.`);
       }
       throw error;

@@ -1,25 +1,17 @@
 // src/students/dto/update-student.dto.ts
-import {
-  IsDecimal,
-  IsInt,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Length,
-  Min,
-} from 'class-validator';
+import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class UpdateStudentDto {
   @IsString()
-  @IsOptional()
+  @IsOptional() // Name can still be optional if you only want to update age, etc.
   name?: string;
 
   @IsInt()
   @Min(1)
   @IsOptional()
-  age?: number;
+  age?: number; // Always accept as a string
 
-  @IsUrl()
+  @IsString()
   @IsOptional()
   avatarUrl?: string;
 
@@ -27,12 +19,15 @@ export class UpdateStudentDto {
   @IsOptional()
   country?: string;
 
-  @IsDecimal()
+  @IsString()
   @IsOptional()
-  tuitionFee?: string;
+  tuitionFee?: string; // Always accept as a string
 
   @IsString()
-  @Length(3, 3, { message: 'Currency must be a 3-letter code (e.g., USD)' })
   @IsOptional()
   currency?: string;
+
+  @IsString()
+  @IsOptional()
+  enrolledAt?: string;
 }
