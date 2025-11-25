@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AssignmentsService } from './assignments.service';
 import { AssignQuizDto } from './dto/assign-quiz.dto';
@@ -17,5 +17,15 @@ export class AssignmentsController {
   @Post('resources') // POST /assignments/resources
   assignResource(@Body() assignResourceDto: AssignResourceDto) {
     return this.assignmentsService.assignResource(assignResourceDto);
+  }
+
+  @Get('quizzes') // GET /assignments/quizzes
+  findAllQuizAssignments() {
+    return this.assignmentsService.findAllQuizAssignments();
+  }
+
+  @Get('resources') // GET /assignments/resources
+  findAllResourceAssignments() {
+    return this.assignmentsService.findAllResourceAssignments();
   }
 }

@@ -89,4 +89,28 @@ export class AssignmentsService {
       },
     });
   }
+
+  async findAllQuizAssignments() {
+    return this.prisma.studentQuizAssignment.findMany({
+      include: {
+        student: true, // Join Student data (so we get names)
+        quiz: true,    // Join Quiz data (so we get titles)
+      },
+      orderBy: {
+        id: 'desc', // Assuming you have a date field. If not, remove this line or sort by id.
+      },
+    });
+  }
+
+  async findAllResourceAssignments() {
+    return this.prisma.studentResourceAssignment.findMany({
+      include: {
+        student: true,
+        resource: true, // Join LibraryResource data
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
 }
