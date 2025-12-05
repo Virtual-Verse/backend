@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, ParseIntPipe, Post, UseGuards, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AssignmentsService } from './assignments.service';
 import { AssignQuizDto } from './dto/assign-quiz.dto';
@@ -7,7 +7,7 @@ import { AssignResourceDto } from './dto/assign-resource.dto';
 @UseGuards(AuthGuard('jwt')) // Protect all assignment routes
 @Controller('assignments')
 export class AssignmentsController {
-  constructor(private readonly assignmentsService: AssignmentsService) {}
+  constructor(private readonly assignmentsService: AssignmentsService) { }
 
   @Post('quizzes') // POST /assignments/quizzes
   assignQuiz(@Body() assignQuizDto: AssignQuizDto) {
@@ -27,5 +27,16 @@ export class AssignmentsController {
   @Get('resources') // GET /assignments/resources
   findAllResourceAssignments() {
     return this.assignmentsService.findAllResourceAssignments();
+  }
+
+  @Get('student/:studentId/quizzes')
+  findStudentQuizAssignments(@Param('studentId', ParseIntPipe) studentId: number) {
+    return this.assignmentsService.findStudentQuizAssignments(studentId);
+  }
+
+  // Ideally, add @Public() here
+  @Get('student/:studentId/resources')
+  findStudentResourceAssignments(@Param('studentId', ParseIntPipe) studentId: number) {
+    return this.assignmentsService.findStudentResourceAssignments(studentId);
   }
 }

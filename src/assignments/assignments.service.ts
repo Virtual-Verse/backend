@@ -9,7 +9,7 @@ import { AssignResourceDto } from './dto/assign-resource.dto';
 
 @Injectable()
 export class AssignmentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async assignQuiz(assignQuizDto: AssignQuizDto) {
     const { studentId, quizId } = assignQuizDto;
@@ -107,6 +107,30 @@ export class AssignmentsService {
       include: {
         student: true,
         resource: true, // Join LibraryResource data
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
+  async findStudentQuizAssignments(studentId: number) {
+    return this.prisma.studentQuizAssignment.findMany({
+      where: { studentId },
+      include: {
+        quiz: true, // We need the quiz title/content
+      },
+      orderBy: {
+        id: 'desc', // Assuming default createdAt/assignedAt
+      },
+    });
+  }
+
+  async findStudentResourceAssignments(studentId: number) {
+    return this.prisma.studentResourceAssignment.findMany({
+      where: { studentId },
+      include: {
+        resource: true, // We need the fileUrl and title
       },
       orderBy: {
         id: 'desc',
